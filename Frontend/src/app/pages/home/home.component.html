@@ -1,0 +1,150 @@
+<div class="card">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <p-button icon="pi pi-plus" class="mr-2" label="Nueva Posición" (click)="navigateToNewPosition()" />
+        </div>
+        <div class="p-toolbar-group-start">
+            <p-button icon="pi pi-plus" class="mr-2" label="Nueva Postulación" (click)="navigateToNewJobApp()" />
+        </div>
+    </p-toolbar>
+</div>
+<p-tabView>
+    <p-tabPanel header="Postulaciones">
+        <div class="card">
+            <p-table #dt2 [columns]="cols" [value]="jobApp" [paginator]="true" [rows]="10"
+                [rowsPerPageOptions]="[5,10,15]" [showCurrentPageReport]="true" [loading]="loading"
+                [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="stack"
+                [globalFilterFields]="['id_jobapp','date_application','jobName','jobDesc','candidateName','statusDesc']">
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="id_jobapp" style="width:20%">
+                            Código de Postulación <p-sortIcon field="id_jobapp" />
+                        </th>
+                        <th pSortableColumn="date_application" style="width:20%">
+                            Fecha de postulación <p-sortIcon field="date_application" />
+                        </th>
+                        <th pSortableColumn="jobName" style="width:20%">
+                            Posición <p-sortIcon field="jobName" />
+                        </th>
+                        <th pSortableColumn="jobDesc" style="width:20%">
+                            Descripción <p-sortIcon field="jobDesc" />
+                        </th>
+                        <th pSortableColumn="candidateName" style="width:20%">
+                            Candidato <p-sortIcon field="candidateName" />
+                        </th>
+                        <th pSortableColumn="statusDesc" style="width:20%">
+                            Estado <p-sortIcon field="statusDesc" />
+                        </th>
+                        <th style="width:20%">
+                            Acción
+                        </th>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            <p-columnFilter *ngIf="col.field !== 'date_application' && col.field !== 'statusDesc'" [field]="col.field" [matchMode]="'equals'"></p-columnFilter>
+                            <ng-container *ngIf="col.field === 'date_application'">
+                                <p-columnFilter [field]="col.field">
+                                    <p-calendar [(ngModel)]="selectedDate" view="month" dateFormat="mm/yy"
+                                            [readonlyInput]="true" (onSelect)="filterDate(selectedDate)" />
+                                  </p-columnFilter>
+                            </ng-container></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-job>
+                    <tr>
+                        <td>{{ job.id_jobapp }}</td>
+                        <td>{{ job.date_application | date }}</td>
+                        <td>{{ job.jobName }}</td>
+                        <td>{{ job.jobDesc }}</td>
+                        <td>{{ job.candidateName }} {{ job.candidateLastname }}</td>
+                        <td>{{ job.statusDesc }}</td>
+                        <td>
+                            <p-button icon="pi pi-eye" loading="{{loading}}" (onClick)="viewJob(job)" />
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Posiciones">
+        <div class="card">
+            <p-table [value]="positions" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="stack">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id_job" style="width:20%">
+                            Código de Posición <p-sortIcon field="id_job" />
+                        </th>
+                        <th pSortableColumn="name" style="width:20%">
+                            Posición <p-sortIcon field="name" />
+                        </th>
+                        <th pSortableColumn="description" style="width:20%">
+                            Descripción <p-sortIcon field="description" />
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-position>
+                    <tr>
+                        <td>{{ position.id_job }}</td>
+                        <td>{{ position.name }}</td>
+                        <td>{{ position.description }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+<!-- DETAIL SIDEBAR -->
+<p-sidebar [(visible)]="sidebarVisible" position="right">
+    <p-dataView #dv [value]="jobAppDetail">
+        <ng-template pTemplate="list" let-jobapp>
+            <div class="grid grid-nogutter">
+                <p class="m-0">
+                    <label>Código postulación: </label>
+                    <label>{{ jobapp.id_jobapp }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Fecha postulación: </label>
+                    <label>{{ jobapp.date_application | date }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Candidato: </label>
+                    <label>{{ jobapp.candidateName }} {{ jobapp.candidateLastname }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Posición: </label>
+                    <label>{{ jobapp.jobName }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Descripción: </label>
+                    <label>{{ jobapp.jobDesc }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Estado: </label>
+                    <label>{{ jobapp.statusDesc }}</label>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Descargar CV: </label>
+                    <p-button icon="pi pi-download" (click)="downloadCV(jobapp.cv)" *ngIf="jobapp.cv"></p-button>
+                    <p-divider />
+                </p>
+                <p class="m-0">
+                    <label>Actualizar Estado: </label>
+                    <p-dropdown [options]="status" [(ngModel)]="selectedStatus" [checkmark]="true"
+                        optionLabel="description" [showClear]="true" placeholder="Actualizar Estado" />
+                    <p-divider />
+                </p>
+            </div>
+            <div class="p-toolbar-group-start">
+                <p-button icon="pi pi-save" class="mr-2" label="Guardar"
+                    (click)="updateJobApp(jobapp,selectedStatus)" />
+            </div>
+        </ng-template>
+    </p-dataView>
+</p-sidebar>

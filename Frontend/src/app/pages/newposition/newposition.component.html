@@ -1,0 +1,26 @@
+<div class="card">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <p-button icon="pi pi-home" class="mr-2" label="Inicio" (click)="navigateToHome()" />
+        </div>
+        <div>
+            <h3>Nueva Posición</h3>
+        </div>
+    </p-toolbar>
+</div>
+<p-card responsiveLayout="stack">
+    <form [formGroup]="positionForm" (ngSubmit)="savePosition()">
+        <div class="form-group">
+            <label for="name">Nombre de la Posición</label>
+            <input id="name" pInputText placeholder="Ingrese el nombre" [formControl]="name" required />
+        </div>
+        <div class="form-group">
+            <label for="description">Descripción de la Posición</label>
+            <input id="description" pInputText placeholder="Ingrese la descripción" [formControl]="description" required />
+        </div>
+        <p-divider />
+        <div class="p-toolbar-group-start">
+            <p-button icon="pi pi-save" class="mr-2" label="Guardar" type="submit" />
+        </div>
+    </form>
+</p-card>

@@ -1,0 +1,87 @@
+<div class="card">
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <p-button icon="pi pi-home" class="mr-2" label="Inicio" (click)="navigateToHome()" />
+        </div>
+        <div>
+            <h3>Nueva Postulación</h3>
+        </div>
+    </p-toolbar>
+    <!-- </div> -->
+    <p-panel header="Ingreso de una nueva postulación" responsiveLayout="stack">
+        <!-- Seleccionar Candidato -->
+        <div>
+            <p-dropdown [options]="candidates" [(ngModel)]="selectedCandidate" [checkmark]="true" optionLabel="fullName"
+                [showClear]="true" placeholder="Seleccione un Candidato" />
+            <p-button icon="pi pi-plus" class="mr-2" (click)="NewCandidate()" />
+            <div *ngIf="!selectedCandidate && !newCandidate">
+                <p-card header="Seleccione un candidato">
+                    <p class="m-0">
+                        Por favor seleccione o cree un candidato para continuar
+                    </p>
+                </p-card>
+            </div>
+        </div>
+        <div *ngIf="selectedCandidate">
+            <p-divider />
+            <p class="m-0">
+                {{selectedCandidate.candidate.name}} {{selectedCandidate.candidate.lastname}}
+            </p>
+            <p class="m-0">
+                {{selectedCandidate.candidate.email}}
+            </p>
+            <p class="m-0">
+                {{selectedCandidate.candidate.phone}}
+            </p>
+            <p-divider />
+        </div>
+        <div class="card flex justify-content-center" *ngIf="newCandidate && !selectedCandidate">
+            <form [formGroup]="jobAppForm">
+                <p-inputGroup>
+                    <input pInputText [formControl]="rut" placeholder="Rut" required />
+                </p-inputGroup>
+                <p-inputGroup>
+                    <input pInputText placeholder="Nombre" [formControl]="name" required />
+                </p-inputGroup>
+                <p-inputGroup>
+                    <input pInputText placeholder="Apellido" [formControl]="lastname" required />
+                </p-inputGroup>
+                <p-inputGroup>
+                    <input pInputText placeholder="Email" [formControl]="email" required />
+                </p-inputGroup>
+                <p-inputGroup>
+                    <input pInputText placeholder="Telefono" [formControl]="phone" required />
+                </p-inputGroup>
+                <input type="file" class="file-input" (change)="onUpload($event)" accept=".pdf,.docx,.doc" #fileUpload>
+            </form>
+            <p-divider />
+        </div>
+        <div *ngIf="selectedCandidate || newCandidate">
+            <!-- Seleccionar posición -->
+            <p-dropdown [options]="positions" [(ngModel)]="selectedPosition" [checkmark]="true" optionLabel="name"
+                [showClear]="true" placeholder="Seleccione una Posición" />
+            <div *ngIf="!selectedPosition">
+                <p-card header="Seleccione una posición">
+                    <p class="m-0">
+                        Por favor seleccione una posición para continuar
+                    </p>
+                </p-card>
+                <p-divider />
+            </div>
+
+            <div *ngIf="selectedPosition">
+                <p class="m-0">
+                    Posición: {{selectedPosition.name}}
+                </p>
+                <p class="m-0">
+                    Descripción: {{selectedPosition.description}}
+                </p>
+                <p-divider />
+            </div>
+        </div>
+
+        <div class="p-toolbar-group-start" *ngIf="(selectedCandidate || newCandidate) && selectedPosition">
+            <p-button icon="pi pi-save" class="mr-2" label="Guardar" type="submit" (click)="saveJobApp()" />
+        </div>
+
+    </p-panel>

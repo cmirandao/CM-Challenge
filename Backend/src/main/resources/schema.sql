@@ -1,0 +1,34 @@
+DROP TABLE IF EXISTS CANDIDATE;
+CREATE TABLE CANDIDATE (
+id_candidate INT AUTO_INCREMENT  PRIMARY KEY,
+rut VARCHAR(15) NOT NULL,
+name VARCHAR(50) NOT NULL,
+lastname VARCHAR(50) NOT NULL,
+email VARCHAR(100) NOT NULL,
+phone VARCHAR(50) NOT NULL,
+cv VARCHAR(max) NOT NULL
+);
+DROP TABLE IF EXISTS JOB;
+CREATE TABLE JOB (
+id_job INT AUTO_INCREMENT  PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+description VARCHAR(250) NOT NULL
+);
+DROP TABLE IF EXISTS STATUS;
+CREATE TABLE STATUS (
+id_status INT AUTO_INCREMENT  PRIMARY KEY,
+description VARCHAR(250) NOT NULL
+);
+DROP TABLE IF EXISTS JOB_APPLICATION;
+CREATE TABLE JOB_APPLICATION (
+id_jobapp INT AUTO_INCREMENT  PRIMARY KEY,
+id_candidate INT NOT NULL,
+id_job INT NOT NULL,
+id_status INT NOT NULL,
+date_application DATE,
+foreign key (id_candidate) references CANDIDATE(id_candidate),
+foreign key (id_job) references JOB(id_job),
+foreign key (id_status) references STATUS(id_status)
+);
+
+
